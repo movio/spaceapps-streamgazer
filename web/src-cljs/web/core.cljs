@@ -1,55 +1,26 @@
 (ns web.core
   (:require [reagent.core :as reagent :refer [atom]]
-            [secretary.core :as secretary]
-            [reagent.session :as session]
-            [reagent-forms.core :refer [bind-fields]]
-            [ajax.core :refer [GET POST]])
-  (:require-macros [secretary.core :refer [defroute]]))
+            [ajax.core :refer [GET POST]]))
 
-(defn navbar []
-      [:div.navbar.navbar-inverse.navbar-fixed-top
-       [:div.container
-        [:div.navbar-header
-         [:a.navbar-brand {:href "#/"} "web"]]
-        [:div.navbar-collapse.collapse
-         [:ul.nav.navbar-nav
-          [:li {:class (when (= :home (session/get :page)) "active")}
-           [:a {:on-click #(secretary/dispatch! "#/")} "Home"]]
-          [:li {:class (when (= :map (session/get :page)) "active")}
-           [:a {:on-click #(secretary/dispatch! "#/map")} "Map"]]
-          [:li {:class (when (= :about (session/get :page)) "active")}
-           [:a {:on-click #(secretary/dispatch! "#/about")} "About"]]]]]])
+(defn home []
+  [:div#map])
 
-(defn about-page []
-  [:div "this is the story of web... work in progress"])
+(defn home-did-mount []
+  (let [map (.setView (.map js/L "map") #js [51.505 -0.09] 13)]
+    (.addTo (.tileLayer js/L "http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+                        (clj->js {:attribution "Map data &copy; [isac.]"
+                                  :maxZoom 18}))
+            map)))
 
-(defn map-page []
-  [:div
-   [:h2 "Welcome to the map!"]])
-
-(defn home-page []
-  [:div
-   [:h2 "Welcome to ClojureScript"]])
-
-(def pages
-  {:home home-page
-   :map map-page
-   :about about-page})
-
-(defn page []
-  [(pages (session/get :page))])
-
-(defroute "/" [] (session/put! :page :home))
-(defroute "/map" [] (session/put! :page :map))
-(defroute "/about" [] (session/put! :page :about))
+(defn home-component []
+  (reagent/create-class {:reagent-render home
+                         :component-did-mount home-did-mount}))
 
 (defn mount-components []
-  (reagent/render-component [navbar] (.getElementById js/document "navbar"))
-  (reagent/render-component [page] (.getElementById js/document "app")))
+  (reagent/render-component [home-component]
+                            (.getElementById js/document "app")))
 
 (defn init! []
-  (secretary/set-config! :prefix "#")
-  (session/put! :page :home)
   (mount-components))
 
 

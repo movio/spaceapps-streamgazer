@@ -8,7 +8,7 @@
 
 (figwheel/watch-and-reload
   :websocket-url "ws://localhost:3449/figwheel-ws"
-  :jsload-callback core/mount-components)
+  :jsload-callback (fn [] (core/mount-components)))
 
 (weasel/connect "ws://localhost:9001" :verbose true)
 
