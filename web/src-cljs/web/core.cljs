@@ -15,11 +15,17 @@
          [:ul.nav.navbar-nav
           [:li {:class (when (= :home (session/get :page)) "active")}
            [:a {:on-click #(secretary/dispatch! "#/")} "Home"]]
+          [:li {:class (when (= :map (session/get :page)) "active")}
+           [:a {:on-click #(secretary/dispatch! "#/map")} "Map"]]
           [:li {:class (when (= :about (session/get :page)) "active")}
            [:a {:on-click #(secretary/dispatch! "#/about")} "About"]]]]]])
 
 (defn about-page []
   [:div "this is the story of web... work in progress"])
+
+(defn map-page []
+  [:div
+   [:h2 "Welcome to the map!"]])
 
 (defn home-page []
   [:div
@@ -27,12 +33,14 @@
 
 (def pages
   {:home home-page
+   :map map-page
    :about about-page})
 
 (defn page []
   [(pages (session/get :page))])
 
 (defroute "/" [] (session/put! :page :home))
+(defroute "/map" [] (session/put! :page :map))
 (defroute "/about" [] (session/put! :page :about))
 
 (defn mount-components []
