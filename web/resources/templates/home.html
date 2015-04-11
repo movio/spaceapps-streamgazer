@@ -16,7 +16,6 @@
     {% if dev %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet-src.js"></script>
-      {% script "/js/leaflet-d3-layer.js" %}
       {% script "/js/visualization.js" %}
       {% script "/js/out/goog/base.js" %}
       {% script "/js/app.js" %}
@@ -24,7 +23,6 @@
     {% else %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-      {% script "/js/leaflet-d3-layer.js" %}
       {% script "/js/visualization.js" %}
       {% script "/js/app.js" %}
     {% endif %}
