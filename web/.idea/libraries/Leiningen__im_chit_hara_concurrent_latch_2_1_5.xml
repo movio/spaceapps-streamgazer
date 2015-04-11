@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: im.chit/hara.concurrent.latch:2.1.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/im/chit/hara.concurrent.latch/2.1.5/hara.concurrent.latch-2.1.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

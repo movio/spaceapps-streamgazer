@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: com.keminglabs/cljx:0.4.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/keminglabs/cljx/0.4.0/cljx-0.4.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

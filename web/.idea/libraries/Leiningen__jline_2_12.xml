@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Leiningen: jline:2.12">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/jline/jline/2.12/jline-2.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
