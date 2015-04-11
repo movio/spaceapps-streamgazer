@@ -1,0 +1,1 @@
+web: java $JVM_OPTS -cp target/web.jar clojure.main -m web.core
