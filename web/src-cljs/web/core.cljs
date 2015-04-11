@@ -6,11 +6,25 @@
   [:div#map])
 
 (defn home-did-mount []
-  (let [map (.setView (.map js/L "map") #js [51.505 -0.09] 13)]
+  (let [d3Layer (js/L.GeoJSON.d3. (clj->js {:type "Feature"
+                                            :geometry {
+                                                       :type "Point"
+                                                       :coordinates [125.6 10.1]
+                                                       }
+                                            :properties {
+                                                         :name "Isaac!"
+                                                         }}))
+        map (.setView (.map js/L "map") #js [125.6 10.1] 13)]
+
+
+    (.log js/console d3Layer)
+
     (.addTo (.tileLayer js/L "http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
                         (clj->js {:attribution "Map data &copy; [isac.]"
                                   :maxZoom 18}))
-            map)))
+            map)
+
+    (.addLayer map d3Layer)))
 
 (defn home-component []
   (reagent/create-class {:reagent-render home
