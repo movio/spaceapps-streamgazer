@@ -1,10 +1,13 @@
 # crawler
 
-FIXME: description
+Crawls and aggregates available data on streams from services such as the
+[US Water Quality Portal](http://waterqualitydata.us/) then writes the data into
+[ElasticSearch](http://elasticsearch.org/) to make it available for fast and
+simple querying.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+FIXME.
 
 ## Usage
 
@@ -30,7 +33,11 @@ FIXME: listing of options this app accepts.
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015 Movio Ltd. All rights reserved.
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+The use and distribution terms for this software are covered by the
+Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+which can be found in the file epl-v10.html at the root of this distribution.
+By using this software in any fashion, you are agreeing to be bound by
+the terms of this license.
+You must not remove this notice, or any other, from this software.
