@@ -70,7 +70,8 @@
     {:source-paths ["src-cljs"]
      :compiler
      {:output-dir "resources/public/js/out"
-      :externs ["react/externs/react.js"]
+      :externs ["react/externs/react.js"
+                "resources/public/js/d3/d3-externs.js"]
       :optimizations :none
       :output-to "resources/public/js/app.js"
       :pretty-print true}}}}
