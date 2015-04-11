@@ -41,12 +41,15 @@
             [org.clojars.punkisdead/lein-cucumber "1.0.4"]
             [lein-cljsbuild "1.0.4"]
             [lein-sassc "0.10.4"]
+            [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]]
   
   :cucumber-feature-paths ["test/features"]
 
   
-
+  :aliases {"babel" ["shell" "babel" "--out-file"
+                     "resources/public/js/visualization.js"
+                     "resources/es6/visualization.es6"]}
   
   :sassc [{:src "resources/scss/screen.scss"
   :style "nested"
@@ -56,7 +59,10 @@
   :hooks [leiningen.sassc]
 
   :auto {"compile"  {:paths ["resources/scss"]
-                   :file-pattern  #"\.(scss)$"}}
+                   :file-pattern  #"\.(scss)$"}
+         "babel" {:paths ["resources/es6"]
+                  :file-pattern #"\.(es6)$"}
+         }
 
 
   :ring {:handler web.handler/app
