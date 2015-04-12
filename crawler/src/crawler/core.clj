@@ -14,8 +14,8 @@
       (doseq [doc (s/search-results geo-loc start-date end-date)]
         (try
           (m/insert-waterquality-data doc)
-          (catch e (println "Error inserting doc" e)))))))
-
+          (catch Exception e
+            (println "Error inserting doc" e)))))))
 
 
 (defn fake-data
