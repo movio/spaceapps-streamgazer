@@ -1,5 +1,90 @@
+/*jshint esnext: true */
+
+var years = [for (j of Array(7).fill(0).map((v,i) => new Date(2009 + i, 1) )) j];
+
+var months = _.reduce(years, (memo, year) => {
+    return memo.concat([for (j of Array(12).fill(0).map((v,i) => new Date(year.getFullYear(), i + 1 ) )) j]);
+}, []);
+
+var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
+
+var days = _.reduce(months, (memo, month) => {
+    return memo.concat([for (j of Array(new Date(month.getFullYear(), month.getMonth()+1, 0).getDate()).fill(0).map((v,i) => new Date(month.getFullYear(), month.getMonth() + 1, i + 1) )) j]);
+}, []);
+
+
+var scale = d3.time.scale()
+    .domain([new Date(2009, 1), new Date(2016, 12)]);
+
+var scrubbers = d3
+    .select('body')
+    .append('div')
+    .classed('scrubbers', true);
+
+scrubbers
+    .append('div')
+    .classed('scrubSpacer', true);
+
+var yearScrubber = scrubbers
+    .append('div')
+    .classed('scrubber', true);
+
+yearScrubber
+    .selectAll('div')
+    .data(years)
+    .enter()
+    .append('div')
+    .classed('year', true)
+    .text(year => year.getFullYear());
+
+scrubbers
+    .append('div')
+    .classed('scrubSpacer', true);
+
+var monthScrubber = scrubbers
+    .append('div')
+    .classed('scrubber', true);    
+
+monthScrubber
+    .selectAll('div')
+    .data(months)
+    .enter()
+    .append('div')
+    .classed('month', true)
+    .text(month => monthNames[month.getMonth()]);
+
+scrubbers
+    .append('div')
+    .classed('scrubSpacer', true);
+
+var dayScrubber = scrubbers
+    .append('div')
+    .classed('scrubber', true);
+
+dayScrubber
+    .selectAll('div')
+    .data(days)
+    .enter()
+    .append('div')
+    .classed('day', true)
+    .text(day => day.getDate() + 1);
+
+scrubbers
+    .append('div')
+    .classed('scrubSpacer', true);
+
 
 var map = L.map('map').setView([37.09024, -95.712891], 5);
+
+// Disable drag and zoom handlers.
+map.dragging.disable();
+map.touchZoom.disable();
+map.doubleClickZoom.disable();
+map.scrollWheelZoom.disable();
+
+// Disable tap handler, if present.
+if (map.tap) map.tap.disable();
 
 L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; [...]',

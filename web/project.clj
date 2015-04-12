@@ -49,7 +49,7 @@
   :cucumber-feature-paths ["test/features"]
 
 
-  :aliases {"babel" ["shell" "babel" "--out-file"
+  :aliases {"babel" ["shell" "babel" "--experimental" "--out-file"
                      "resources/public/js/visualization.js"
                      "resources/es6/visualization.es6"]}
 

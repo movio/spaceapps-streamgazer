@@ -4,10 +4,151 @@ html, body {
 
 #map {
   height: 100%; }
+  #map .leaflet-top.leaflet-left .leaflet-control-attribution {
+    display: none; }
+
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: avenir, helvetica, arial, sans-serif; }
+
+body {
+  background-image: url('../img/background.jpg');
+  background-size: cover; }
+
+.button {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+  color: #3585f1;
+  cursor: pointer;
+  transition: all 0.3s;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 30px 30px; }
+  .button:hover {
+    background-size: 30px 30px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+  .button.active {
+    background-color: rgba(53, 133, 241, 0.9);
+    color: white; }
+    .button.active:hover {
+      background-color: #3585f1; }
+  .button.swim {
+    background-image: url('../img/swim-blue.svg'); }
+    .button.swim.active {
+      background-image: url('../img/swim-white.svg'); }
+  .button.kayak {
+    background-image: url('../img/kayak-blue.svg'); }
+    .button.kayak.active {
+      background-image: url('../img/kayak-white.svg'); }
+  .button.fish {
+    background-image: url('../img/fish-blue.svg'); }
+    .button.fish.active {
+      background-image: url('../img/fish-white.svg'); }
+  .button.play {
+    background-size: 18px 18px;
+    background-image: url('../img/play-blue.svg'); }
+    .button.play.active {
+      background-image: url('../img/pause-white.svg'); }
+  .button.info {
+    background-size: 18px 18px;
+    background-image: url('../img/info-blue.svg'); }
+    .button.info.active {
+      background-image: url('../img/info-white.svg'); }
+
+.layerButtons {
+  position: absolute;
+  bottom: 106px;
+  right: 20px; }
+
+.playButton {
+  position: absolute;
+  bottom: 106px;
+  left: 20px; }
+
+.timeScaleButtons {
+  position: absolute;
+  bottom: 182px;
+  left: 20px; }
+  .timeScaleButtons .button {
+    font-size: 12px;
+    margin-bottom: 4px;
+    border-radius: 0; }
+    .timeScaleButtons .button:first-child {
+      border-radius: 2px 2px 0 0; }
+    .timeScaleButtons .button:last-child {
+      border-radius: 0 0 2px 2px; }
+
+.infoButton {
+  position: absolute;
+  top: 20px;
+  right: 20px; }
+
+.playhead {
+  width: 2px;
+  height: 100px;
+  background: white;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-left: -1px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 999; }
+
+.scrubbers {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  background-color: rgba(37, 93, 168, 0.8); }
+  .scrubbers .scrubSpacer {
+    postion: relative;
+    top: 10px;
+    width: 100%;
+    height: 2px;
+    background: white; }
+  .scrubbers .scrubber {
+    font-size: 0;
+    height: 30px;
+    width: 5000px;
+    overflow: hidden;
+    transition: all 1s;
+    left: 0;
+    position: relative; }
+    .scrubbers .scrubber div {
+      display: inline-block;
+      font-size: 12px;
+      color: white;
+      padding-left: 10px;
+      border-right: 2px solid white;
+      height: 30px;
+      line-height: 30px; }
+      .scrubbers .scrubber div:first-child {
+        border-left: 2px solid white; }
+      .scrubbers .scrubber div:hover {
+        background: #3585f1;
+        cursor: pointer; }
+      .scrubbers .scrubber div.active {
+        background: #3585f1; }
+    .scrubbers .scrubber .day {
+      width: 24px; }
+    .scrubbers .scrubber .month {
+      width: 80px; }
+    .scrubbers .scrubber .year {
+      width: 50px; }
 
 svg {
   position: relative; }
 
+/* TO DELETE: for us-state.json demo */
 path {
   fill: #000;
   fill-opacity: .2;
