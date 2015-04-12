@@ -1,6 +1,7 @@
 (ns crawler.core
   (:require [crawler.model :as m]
-            [crawler.webservice :as s])
+            [crawler.webservice :as s]
+            [clojure.java.io :as io])
   (:gen-class))
 
 (defn crawl-data
@@ -11,7 +12,16 @@
     (m/with-elastic
       (m/init-index)
       (doseq [doc (s/search-results geo-loc start-date end-date)]
-        (m/insert-waterquality-data doc)))))
+        (try
+          (m/insert-waterquality-data doc)
+          (catch e (println "Error inserting doc" e)))))))
+
+
+
+(defn fake-data
+  [points-file start-year end-year]
+  (let [rdr (io/reader points-file)
+        lines (line-seq rdr)]))
 
 (defn -main
   "I don't do a whole lot ... yet."

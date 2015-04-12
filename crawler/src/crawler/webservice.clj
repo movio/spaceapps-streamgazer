@@ -35,10 +35,7 @@
 
 (def characteristics
   ["Depth"
-   "Current direction"
    "Current speed"
-   "True color"
-   "Temperature, air"
    "Temperature, water"
    "Stream width measure"
    "Stream flow, mean. daily"
