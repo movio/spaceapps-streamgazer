@@ -1,62 +1,94 @@
 (ns web.routes.services
-  (:require [ring.util.http-response :refer :all]
-            [compojure.api.sweet :refer :all]
-            [schema.core :as s]))
+  (:require [compojure.core :refer :all]
+            [clojurewerkz.elastisch.rest :as es]
+            [clojurewerkz.elastisch.rest.document :as esd]
+            [clojurewerkz.elastisch.rest.response :as esrsp]))
 
-(s/defschema Thingie {:id Long
-                      :hot Boolean
-                      :tag (s/enum :kikka :kukka)
-                      :chief [{:name String
-                               :type #{{:id String}}}]})
 
-(defapi service-routes
-  (ring.swagger.ui/swagger-ui
-   "/swagger-ui"
-   :api-url "/swagger-docs")
-  (swagger-docs
-   :title "Sample api")
-  (swaggered "thingie"
-   :description "There be thingies"
-   (context "/api" []
+(defonce elastic-url "http://107.170.217.185:9200")
+(defonce elastic-index "river_flow")
 
-    (GET* "/plus" []
-          :return       Long
-          :query-params [x :- Long {y :- Long 1}]
-          :summary      "x+y with query-parameters. y defaults to 1."
-          (ok (+ x y)))
+(defn gen-query [name w s e n year]
+  {:filtered
+   {:query {:match {:name name}}
+    :filter {:and [{:range
+                    {:date-time {:gte (str year "-01-01")
+                                 :lte (str year "-12-31")}}}
+                   {:geo_bounding_box
+                    {:geo-loc {:top_left {:lat n :lon w}
+                               :bottom_right {:lat s :lon e}}}}]}}})
 
-    (POST* "/minus" []
-           :return      Long
-           :body-params [x :- Long y :- Long]
-           :summary     "x-y with body-parameters."
-           (ok (- x y)))
+(def aggregation-clause
+  {:geo-loc {:terms {:script "doc['geo-loc'].value.toString()"}
+             :aggs {:avg_value {:avg {:field "value"}}}}})
 
-    (GET* "/times/:x/:y" []
-          :return      Long
-          :path-params [x :- Long y :- Long]
-          :summary     "x*y with path-parameters"
-          (ok (* x y)))
+(defn water-quality-search [name w s e n year]
+  (let [conn (es/connect elastic-url)
+        q (gen-query name w s e n year)]
+    (esd/search conn elastic-index "stream"
+                :query q
+                :aggs aggregation-clause
+                :from 0
+                :size 2000)))
 
-    (POST* "/divide" []
-           :return      Double
-           :form-params [x :- Long y :- Long]
-           :summary     "x/y with form-parameters"
-           (ok (/ x y)))
+(defn bucket->feature [name unit bucket]
+  (let [point (read-string (:key bucket))
+        value (get-in bucket [:avg_value :value])]
+    {:type "Feature"
+     :geometry {:type "Point"
+                :coordinates point}
+     :properties {:name name
+                  :unit unit
+                  :value value}}))
 
-    (GET* "/power" []
-          :return      Long
-          :header-params [x :- Long y :- Long]
-          :summary     "x^y with header-parameters"
-          (ok (long (Math/pow x y))))
+(comment
+  (s/defschema GeoJSON
+    {:type String
+     :features [{:type String
+                 :geometry {:type String
+                            :coordinates [Double]}
+                 :properties {:name String
+                              :unit String
+                              :value Double}}]}))
 
-    (PUT* "/echo" []
-          :return   [{:hot Boolean}]
-          :body     [body [{:hot Boolean}]]
-          :summary  "echoes a vector of anonymous hotties"
-          (ok body))
+(defn to-geo-json [resp]
+  (let [aggs (esrsp/aggregations-from resp)
+        first-hit (first (esrsp/hits-from resp))
+        unit (get-in first-hit [:_source :unit])
+        name (get-in first-hit [:_source :name])
+        features (map (partial bucket->feature name unit)
+                      (get-in aggs [:geo-loc :buckets]))]
+    {:type "FeatureCollection"
+     :features features}))
 
-    (POST* "/echo" []
-           :return   Thingie
-           :body     [thingie Thingie]
-           :summary  "echoes a Thingie from json-body"
-           (ok thingie)))))
+(comment
+  (defapi service-routes
+    (ring.swagger.ui/swagger-ui
+     "/swagger-ui"
+     :api-url "/swagger-docs")
+    (swagger-docs
+     :title "Sample api")
+    (swaggered "waterquality"
+               :description "Water quality data search API"
+               (context "/api" []
+
+                        (GET* "/search" []
+                              :return       GeoJSON
+                              :query-params [name :- String
+                                             w :- Double
+                                             s :- Double
+                                             e :- Double
+                                             n :- Double
+                                             year :- String]
+                              :summary      "Query water quality data of given year within a bound box range"
+                              (to-geo-json (water-quality-search name w s e n year)))))))
+
+(defroutes service-routes
+  (GET "/api/search" [name w s e n year]
+       {:status 200
+        :body (to-geo-json (water-quality-search name
+                                                 (Double/parseDouble w)
+                                                 (Double/parseDouble s)
+                                                 (Double/parseDouble e)
+                                                 (Double/parseDouble n)
+                                                 year))}))

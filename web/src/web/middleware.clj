@@ -10,8 +10,8 @@
             [noir-exception.core :refer [wrap-internal-error]]
             [ring.middleware.session.memory :refer [memory-store]]
             [ring.middleware.format :refer [wrap-restful-format]]
-            
-            ))
+            [ring.middleware.json :refer [wrap-json-response]]
+            [compojure.handler :as handler]))
 
 (defn log-request [handler]
   (fn [req]
@@ -26,12 +26,11 @@
     handler))
 
 (defn production-middleware [handler]
-  (-> handler
-      
-      (wrap-restful-format :formats [:json-kw :edn :transit-json :transit-msgpack])
+  (-> (handler/api handler)
+      wrap-json-response
       (wrap-idle-session-timeout
-        {:timeout (* 60 30)
-         :timeout-response (redirect "/")})
+       {:timeout (* 60 30)
+        :timeout-response (redirect "/")})
       (wrap-defaults
-        (assoc-in site-defaults [:session :store] (memory-store session/mem)))
+       (assoc-in site-defaults [:session :store] (memory-store session/mem)))
       (wrap-internal-error :log #(timbre/error %))))
