@@ -83,4 +83,5 @@
                   (if-let [loc (get @sites site-id)]
                     (->> loc
                          (into m)
-                         transform-item))))))))
+                         transform-item)))))
+         (filter identity))))

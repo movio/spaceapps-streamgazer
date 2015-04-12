@@ -60,12 +60,31 @@
     {:type "FeatureCollection"
      :features features}))
 
+(def rand (java.util.Random.))
+
+(defn gen-random-polygon-within [w s e n]
+  (let [lat (+ s (* n (.nextDouble rand)))
+        lon (+ w (* e (.nextDouble rand)))
+        sz 0.1]
+    [[[(- lon sz) (- lat sz)]
+      [(- lon sz) (+ lat sz)]
+      [(+ lon sz) (+ lat sz)]
+      [(+ lon sz) (- lat sz)]
+      [(- lon sz) (- lat sz)]]]))
+
+(def all-points (repeatedly (partial gen-random-polygon-within -124.0 31 -68 48)))
+
+(defn gen-fake-data [count]
+  {:type "FeatureCollection"
+   :features (for [polygon (take count all-points)]
+               {:type "Feature"
+                :geometry {:type "Polygon"
+                           :coordinates polygon}
+                :properties {:depth (+ 30 (.nextInt rand 20))
+                             :width (+ 100 (.nextInt rand 20))
+                             :temperature (+ 20 (.nextInt rand 10))}})})
+
 (defroutes service-routes
   (GET "/api/search" [name w s e n date]
        {:status 200
-        :body (to-geo-json (water-quality-search name
-                                                 (Double/parseDouble w)
-                                                 (Double/parseDouble s)
-                                                 (Double/parseDouble e)
-                                                 (Double/parseDouble n)
-                                                 date))}))
+        :body (gen-fake-data 200)}))

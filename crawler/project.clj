@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [clojurewerkz/elastisch "2.1.0"]
                  [org.clojure/data.csv "0.1.2"]
-                 [clj-http "1.1.0"]]
+                 [clj-http "1.1.0"]
+                 [clj-time "0.9.0"]]
   :main ^:skip-aot crawler.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

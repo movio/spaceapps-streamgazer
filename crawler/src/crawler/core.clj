@@ -1,7 +1,10 @@
 (ns crawler.core
   (:require [crawler.model :as m]
             [crawler.webservice :as s]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [clj-time.core :as t]
+            [clj-time.periodic :as p]
+            [clojure.string :as str])
   (:gen-class))
 
 (defn crawl-data
@@ -15,13 +18,30 @@
         (try
           (m/insert-waterquality-data doc)
           (catch Exception e
+            (println "Doc: " doc)
             (println "Error inserting doc" e)))))))
 
+(def rand (java.util.Random.))
 
 (defn fake-data
-  [points-file start-year end-year]
-  (let [rdr (io/reader points-file)
-        lines (line-seq rdr)]))
+  [points-file start-year]
+  (let [points (map #(str/split % #"\s+") (line-seq (io/reader points-file)))
+        days (take-while
+              (partial t/after? (t/now))
+              (p/periodic-seq (t/date-time start-year) (t/days 1)))]
+    (m/with-elastic
+      (m/init-index)
+      (doseq [[point initial-val] points
+              :let [initial-val (Double/parseDouble initial-val)]]
+        (doseq [day days]
+          (doseq [name s/characteristics
+                  :let [diff (- 10 (.nextInt rand 20))]]
+            (m/insert-waterquality-data {:name name
+                                         :value (+ initial-val diff)
+                                         :geo-loc point
+                                         :loc-id (str "foo-" point)
+                                         :activity-id "foo"
+                                         :unit "m"})))))))
 
 (defn -main
   "I don't do a whole lot ... yet."
