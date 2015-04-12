@@ -1,7 +1,5 @@
 (ns web.routes.services
-  (:require [ring.util.http-response :refer :all]
-            [compojure.api.sweet :refer :all]
-            [schema.core :as s]
+  (:require [compojure.core :refer :all]
             [clojurewerkz.elastisch.rest :as es]
             [clojurewerkz.elastisch.rest.document :as esd]
             [clojurewerkz.elastisch.rest.response :as esrsp]))
@@ -43,14 +41,15 @@
                   :unit unit
                   :value value}}))
 
-(s/defschema GeoJSON
-  {:type String
-   :features [{:type String
-               :geometry {:type String
-                          :coordinates [Double]}
-               :properties {:name String
-                            :unit String
-                            :value Double}}]})
+(comment
+  (s/defschema GeoJSON
+    {:type String
+     :features [{:type String
+                 :geometry {:type String
+                            :coordinates [Double]}
+                 :properties {:name String
+                              :unit String
+                              :value Double}}]}))
 
 (defn to-geo-json [resp]
   (let [aggs (esrsp/aggregations-from resp)
@@ -62,23 +61,33 @@
     {:type "FeatureCollection"
      :features features}))
 
-(defapi service-routes
-  (ring.swagger.ui/swagger-ui
-   "/swagger-ui"
-   :api-url "/swagger-docs")
-  (swagger-docs
-   :title "Sample api")
-  (swaggered "waterquality"
-   :description "Water quality data search API"
-   (context "/api" []
+(comment
+  (defapi service-routes
+    (ring.swagger.ui/swagger-ui
+     "/swagger-ui"
+     :api-url "/swagger-docs")
+    (swagger-docs
+     :title "Sample api")
+    (swaggered "waterquality"
+               :description "Water quality data search API"
+               (context "/api" []
 
-    (GET* "/search" []
-          :return       GeoJSON
-          :query-params [name :- String
-                         w :- Double
-                         s :- Double
-                         e :- Double
-                         n :- Double
-                         year :- String]
-          :summary      "Query water quality data of given year within a bound box range"
-          (to-geo-json (water-quality-search name w s e n year))))))
+                        (GET* "/search" []
+                              :return       GeoJSON
+                              :query-params [name :- String
+                                             w :- Double
+                                             s :- Double
+                                             e :- Double
+                                             n :- Double
+                                             year :- String]
+                              :summary      "Query water quality data of given year within a bound box range"
+                              (to-geo-json (water-quality-search name w s e n year)))))))
+
+(defroutes service-routes
+  (GET "/api/search" [name w s e n year]
+       (to-geo-json (water-quality-search name
+                                          (Double/parseDouble w)
+                                          (Double/parseDouble s)
+                                          (Double/parseDouble e)
+                                          (Double/parseDouble n)
+                                          year))))

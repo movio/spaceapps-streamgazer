@@ -27,7 +27,8 @@
                  [cljs-ajax "0.3.10"]
                  [metosin/compojure-api "0.19.2"]
                  [metosin/ring-swagger-ui "2.1.0-M2-2"]
-                 [clojurewerkz/elastisch "2.1.0"]]
+                 [clojurewerkz/elastisch "2.1.0"]
+                 [ring/ring-json "0.3.1"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "web.jar"
@@ -47,11 +48,11 @@
 
   :cucumber-feature-paths ["test/features"]
 
-  
+
   :aliases {"babel" ["shell" "babel" "--out-file"
                      "resources/public/js/visualization.js"
                      "resources/es6/visualization.es6"]}
-  
+
   :sassc [{:src "resources/scss/screen.scss"
   :style "nested"
   :output-to "resources/public/css/screen.css"
