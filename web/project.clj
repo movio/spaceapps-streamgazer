@@ -26,7 +26,8 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [cljs-ajax "0.3.10"]
                  [metosin/compojure-api "0.19.2"]
-                 [metosin/ring-swagger-ui "2.1.0-M2-2"]]
+                 [metosin/ring-swagger-ui "2.1.0-M2-2"]
+                 [clojurewerkz/elastisch "2.1.0"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "web.jar"
@@ -43,7 +44,7 @@
             [lein-sassc "0.10.4"]
             [lein-shell "0.4.0"]
             [lein-auto "0.1.2"]]
-  
+
   :cucumber-feature-paths ["test/features"]
 
   
@@ -69,11 +70,11 @@
          :init    web.handler/init
          :destroy web.handler/destroy
          :uberwar-name "web.war"}
-  
-  
+
+
   :clean-targets ^{:protect false} ["resources/public/js"]
-  
-  
+
+
   :cljsbuild
   {:builds
    {:app
@@ -84,8 +85,8 @@
       :optimizations :none
       :output-to "resources/public/js/app.js"
       :pretty-print true}}}}
-  
-  
+
+
   :profiles
   {:uberjar {:omit-source true
              :env {:production true}
@@ -95,8 +96,8 @@
                :builds
                {:app
                 {:source-paths ["env/prod/cljs"]
-                 :compiler {:optimizations :advanced :pretty-print false}}}} 
-             
+                 :compiler {:optimizations :advanced :pretty-print false}}}}
+
              :aot :all}
    :dev {:dependencies [[ring-mock "0.1.5"]
                         [ring/ring-devel "1.3.2"]
@@ -112,22 +113,22 @@
                         [com.cemerick/piggieback "0.2.0"]
                         [org.clojure/tools.nrepl "0.2.10"]]
          :source-paths ["env/dev/clj"]
-         
+
          :plugins [[lein-figwheel "0.2.5"]]
-         
+
           :cljsbuild
           {:builds
            {:app
-            {:source-paths ["env/dev/cljs"] :compiler {:source-map true}}}} 
-         
-         
+            {:source-paths ["env/dev/cljs"] :compiler {:source-map true}}}}
+
+
          :figwheel
          {:http-server-root "public"
           :server-port 3449
           :css-dirs ["resources/public/css"]
           :ring-handler web.handler/app}
-         
-         
+
+
          :repl-options {:init-ns web.repl}
          :injections [(require 'pjstadig.humane-test-output)
                       (pjstadig.humane-test-output/activate!)]
