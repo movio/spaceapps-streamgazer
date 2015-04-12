@@ -31,25 +31,24 @@
                 :from 0
                 :size 2000)))
 
+(defn gen-small-polygon [point]
+  (let [[lat lon] point
+        sz 0.01]
+    [[(- lon sz) (- lat sz)]
+     [(- lon sz) (+ lat sz)]
+     [(+ lon sz) (+ lat sz)]
+     [(+ lon sz) (- lat sz)]
+     [(- lon sz) (- lat sz)]]))
+
 (defn bucket->feature [name unit bucket]
   (let [point (read-string (:key bucket))
         value (get-in bucket [:avg_value :value])]
     {:type "Feature"
-     :geometry {:type "Point"
-                :coordinates point}
+     :geometry {:type "Polygon"
+                :coordinates (gen-small-polygon point)}
      :properties {:name name
                   :unit unit
                   :value value}}))
-
-(comment
-  (s/defschema GeoJSON
-    {:type String
-     :features [{:type String
-                 :geometry {:type String
-                            :coordinates [Double]}
-                 :properties {:name String
-                              :unit String
-                              :value Double}}]}))
 
 (defn to-geo-json [resp]
   (let [aggs (esrsp/aggregations-from resp)
@@ -60,28 +59,6 @@
                       (get-in aggs [:geo-loc :buckets]))]
     {:type "FeatureCollection"
      :features features}))
-
-(comment
-  (defapi service-routes
-    (ring.swagger.ui/swagger-ui
-     "/swagger-ui"
-     :api-url "/swagger-docs")
-    (swagger-docs
-     :title "Sample api")
-    (swaggered "waterquality"
-               :description "Water quality data search API"
-               (context "/api" []
-
-                        (GET* "/search" []
-                              :return       GeoJSON
-                              :query-params [name :- String
-                                             w :- Double
-                                             s :- Double
-                                             e :- Double
-                                             n :- Double
-                                             year :- String]
-                              :summary      "Query water quality data of given year within a bound box range"
-                              (to-geo-json (water-quality-search name w s e n year)))))))
 
 (defroutes service-routes
   (GET "/api/search" [name w s e n year]
