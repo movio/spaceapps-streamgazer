@@ -2,7 +2,7 @@
   <head>
       <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
       <title>Welcome to web</title>
-      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css"/>
+      <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   </head>
   <body>
     <div id="map"></div>
@@ -26,24 +26,25 @@
     <div class="playhead"></div>
 
     <!-- scripts and styles -->
+    {% style "/css/leaflet.css" %}
     {% style "/css/screen.css" %}
 
     <script type="text/javascript">
         var context = "{{servlet-context}}";
     </script>
     {% if dev %}
-      <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet-src.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.6.0/lodash.js"></script>
+      {% script "/js/d3.js" %}
+      {% script "/js/leaflet-src.js" %}
+      {% script "/js/lodash.js" %}
       {% script "/js/browser-polyfill.js" %}
       {% script "/js/visualization.js" %}
       {% script "/js/out/goog/base.js" %}
       {% script "/js/app.js" %}
       <script type="text/javascript">goog.require("web.app");</script>
     {% else %}
-      <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.6.0/lodash.min.js"></script>
+      {% script "/js/d3.min.js" %}
+      {% script "/js/leaflet.js" %}
+      {% script "/js/lodash.min.js" %}
       {% script "/js/browser-polyfill.js" %}
       {% script "/js/visualization.js" %}
       {% script "/js/app.js" %}
