@@ -9,7 +9,14 @@ L.tileLayer('http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
 var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-d3.json("/api/search?name=Depth&year=2015&w=-124&s=37&e=-112&n=42", function(collection) {
+var latLngBounds = map.getBounds();
+
+console.log('West: ', latLngBounds.getWest());
+console.log('South: ', latLngBounds.getSouth());
+console.log('East: ', latLngBounds.getEast());
+console.log('North: ', latLngBounds.getNorth());
+
+d3.json(`/api/search?name=Depth&year=2015&w=${latLngBounds.getWest()}&s=${latLngBounds.getSouth()}&e=${latLngBounds.getEast()}&n=${latLngBounds.getNorth()}`, function(collection) {
     var transform = d3.geo.transform({point: projectPoint}),
         path = d3.geo.path().projection(transform);
 
