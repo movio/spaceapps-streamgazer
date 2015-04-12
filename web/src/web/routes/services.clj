@@ -8,12 +8,12 @@
 (defonce elastic-url "http://107.170.217.185:9200")
 (defonce elastic-index "river_flow")
 
-(defn gen-query [name w s e n year]
+(defn gen-query [name w s e n date]
   {:filtered
    {:query {:match {:name name}}
     :filter {:and [{:range
-                    {:date-time {:gte (str year "-01-01")
-                                 :lte (str year "-12-31")}}}
+                    {:date-time {:gte (str date "T00:00:00")
+                                 :lte (str date "T23:59:59")}}}
                    {:geo_bounding_box
                     {:geo-loc {:top_left {:lat n :lon w}
                                :bottom_right {:lat s :lon e}}}}]}}})
@@ -22,14 +22,14 @@
   {:geo-loc {:terms {:script "doc['geo-loc'].value.toString()"}
              :aggs {:avg_value {:avg {:field "value"}}}}})
 
-(defn water-quality-search [name w s e n year]
+(defn water-quality-search [name w s e n date]
   (let [conn (es/connect elastic-url)
-        q (gen-query name w s e n year)]
+        q (gen-query name w s e n date)]
     (esd/search conn elastic-index "stream"
                 :query q
                 :aggs aggregation-clause
                 :from 0
-                :size 2000)))
+                :size 5000)))
 
 (defn gen-small-polygon [point]
   (let [[lat lon] point
@@ -61,11 +61,11 @@
      :features features}))
 
 (defroutes service-routes
-  (GET "/api/search" [name w s e n year]
+  (GET "/api/search" [name w s e n date]
        {:status 200
         :body (to-geo-json (water-quality-search name
                                                  (Double/parseDouble w)
                                                  (Double/parseDouble s)
                                                  (Double/parseDouble e)
                                                  (Double/parseDouble n)
-                                                 year))}))
+                                                 date))}))
