@@ -85,9 +85,10 @@
 
 (defroutes service-routes
   (GET "/api/search" [name w s e n year]
-       (to-geo-json (water-quality-search name
-                                          (Double/parseDouble w)
-                                          (Double/parseDouble s)
-                                          (Double/parseDouble e)
-                                          (Double/parseDouble n)
-                                          year))))
+       {:status 200
+        :body (to-geo-json (water-quality-search name
+                                                 (Double/parseDouble w)
+                                                 (Double/parseDouble s)
+                                                 (Double/parseDouble e)
+                                                 (Double/parseDouble n)
+                                                 year))}))
