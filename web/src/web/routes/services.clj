@@ -33,12 +33,12 @@
 
 (defn gen-small-polygon [point]
   (let [[lat lon] point
-        sz 0.01]
-    [[(- lon sz) (- lat sz)]
-     [(- lon sz) (+ lat sz)]
-     [(+ lon sz) (+ lat sz)]
-     [(+ lon sz) (- lat sz)]
-     [(- lon sz) (- lat sz)]]))
+        sz 0.5]
+    [[[(- lon sz) (- lat sz)]
+       [(- lon sz) (+ lat sz)]
+       [(+ lon sz) (+ lat sz)]
+       [(+ lon sz) (- lat sz)]
+       [(- lon sz) (- lat sz)]]]))
 
 (defn bucket->feature [name unit bucket]
   (let [point (read-string (:key bucket))
